@@ -18,6 +18,23 @@ class TaskList{
     viewTasks() {
         console.log(this.tasks)
     }
+
+    updateTaskStatus() {
+        return new Promise((resolve, reject) => {
+            rl.question('Entre com o titulo da tarefa a ser atualizada: ', (title) => {
+                const task = this.tasks.find((task) => task.title === title);
+                if (task) {
+                    rl.question('Entre com o novo status: ', (newStatus) => {
+                    task.status = newStatus;
+                    resolve(); // Resolve the promise when done
+                    });
+                } else {
+                    console.log(`Tarefa com o título '${title}' não encontrada.`);
+                    resolve(); // Resolve the promise even if the task is not found
+                }
+            });
+        });
+    }
 }
 
 const taskList = new TaskList()
@@ -42,6 +59,9 @@ function createTask() {
     });
 }
 
+
+  
+
 function displayMenu() {
     console.log("1. Adicionar nova tarefa");
     console.log("2. Visualizar tarefas");
@@ -63,8 +83,9 @@ function menu(option, callback) {
             callback(); 
             break;
         case '3':
-            updateTask();
-            callback(); 
+            taskList.updateTaskStatus().then(() => {
+                callback(); 
+              });
             break;
         case '4':
             removeTask();
