@@ -1,73 +1,96 @@
 class Task {
-
     constructor(title, description, status) {
         this.title = title;
         this.description = description;
         this.status = status;
     }
-
 }
 
+class TaskList{
+    constructor() {
+        this.tasks = []
+    }
 
+    addTaskToList(task) {
+        this.tasks.push(task)
+    }
+    
+    viewTasks() {
+        console.log(this.tasks)
+    }
+}
+
+const taskList = new TaskList()
 
 const readLine = require('readline');
 
-const r1 = readLine.createInterface({
-    input: process.stdin,
-    output: process.stdout
+const rl = readLine.createInterface({
+        input: process.stdin,
+        output: process.stdout
 })
 
-let tasks = []
+function createTask() {
+    return new Promise((resolve, reject) => {
+      rl.question('Titulo: ', (title) => {
+        rl.question('Descricao: ', (description) => {
+          rl.question('Status: ', (status) => {
+            const task = new Task(title, description, status);
+            resolve(task);
+          });
+        });
+      });
+    });
+  }
 
-function createTask(){
-    r1.question('Titulo: ', (title) =>{
-        r1.question('Descricao: ', (description) =>{
-            r1.question('Status:', (status)=>{
-                const task = new Task(title, description, status)
-                tasks.push(task)
-            })
-        })
-    })
+function getMenuChoice() {
+    displayMenu();
+    rl.question('Escolha uma opção: ', (option) => {
+        menu(option);
+    });
 }
 
-function viewTasks(){
-    console.log('-'.repeat(55))
-    console.log('|     FILMES     |     DESCRICAO     |     STATUS     |')
-    for (let i = 0; i < tasks.length; i += 1){
-        const titleString = tasks[i].title;
-        const descriptionString = tasks[i].description;
-        const statusString = tasks[i].status;
-        console.log('| ')
-    }
+function displayMenu() {
+    console.log("1. Adicionar nova tarefa");
+    console.log("2. Visualizar tarefas");
+    console.log("3. Atualizar status");
+    console.log("4. Excluir tarefa");
+    console.log("5. Sair do programa");
 }
 
-function showMenu() {
-    console.log('\n1. Adicionar nova tarefa')
-    console.log('2. Visualizar tarefas')
-    console.log('3. Atualizar status')
-    console.log('4. Excluir tarefa')
-}
-
-function input(option) {
+function menu(option, callback) {
     switch (option) {
-        case 1:
-            createTask();
-            return start();
-        case 2:
-            viewTasks();
+        case '1':
+            createTask().then((newTask) => {
+                taskList.addTaskToList(newTask);
+                callback(); // Call the callback to display the menu again
+            });
             break;
-        case 3:
+        case '2':
+            taskList.viewTasks();
+            callback(); 
+            break;
+        case '3':
             updateTask();
+            callback(); 
             break;
-        case 4:
+        case '4':
             removeTask();
+            callback(); 
             break;
     }
 }
 
-function start() {
-    showMenu()
-    r1.question('Escolha uma opcao', (option) => {
-        input
-    })
-}
+function startProgram() {
+    displayMenu();
+    rl.question('Escolha uma opção: ', (option) => {
+        if (option === '5') {
+            console.log('Saindo do programa.');
+            rl.close();
+        } 
+        else {
+            menu(option, startProgram);
+        }
+    });
+  }
+  
+startProgram();
