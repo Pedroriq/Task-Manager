@@ -35,6 +35,18 @@ class TaskList{
             });
         });
     }
+
+    removeTask(title) {
+        return new Promise((resolve, reject) => {
+            const index = this.tasks.findIndex((task) => task.title === title);
+            if (index !== -1) {
+                this.tasks.splice(index, 1);
+            } else {
+                console.log(`Tarefa com título '${title}' não encontrada.`);
+            }
+            resolve(); // Resolve the promise whether the task was found or not
+        });
+    }
 }
 
 const taskList = new TaskList()
@@ -48,7 +60,7 @@ const rl = readLine.createInterface({
 
 function createTask() {
     return new Promise((resolve, reject) => {
-      rl.question('Titulo: ', (title) => {
+      rl.question('Título: ', (title) => {
         rl.question('Descricao: ', (description) => {
           rl.question('Status: ', (status) => {
             const task = new Task(title, description, status);
@@ -59,8 +71,14 @@ function createTask() {
     });
 }
 
-
-  
+function removeTask() {
+    return new Promise((resolve, reject) => {
+        rl.question('Entre com o título da tarefa que você deseja remover: ', (title) => {
+            taskList.removeTask(title)
+            resolve();
+        });
+    });  
+}
 
 function displayMenu() {
     console.log("1. Adicionar nova tarefa");
@@ -88,8 +106,9 @@ function menu(option, callback) {
               });
             break;
         case '4':
-            removeTask();
-            callback(); 
+            removeTask().then(() => {
+                callback(); 
+            }); 
             break;
     }
 }
