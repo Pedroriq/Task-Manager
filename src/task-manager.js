@@ -81,11 +81,11 @@ function removeTask() {
 }
 
 function displayMenu() {
-    console.log("1. Adicionar nova tarefa");
+    console.log("\n1. Adicionar nova tarefa");
     console.log("2. Visualizar tarefas");
     console.log("3. Atualizar status");
     console.log("4. Excluir tarefa");
-    console.log("5. Sair do programa");
+    console.log("5. Sair do programa\n");
 }
 
 function menu(option, callback) {
@@ -110,6 +110,14 @@ function menu(option, callback) {
                 callback(); 
             }); 
             break;
+        case '5':
+            console.log('Saindo do programa!');
+            rl.close();
+            break;
+        default:
+            console.log('Escolha inválida. Por favor, selecione uma opção válida.');
+            callback(); 
+            break;
     }
 }
 
@@ -117,7 +125,7 @@ function startProgram() {
     displayMenu();
     rl.question('Escolha uma opção: ', (option) => {
         if (option === '5') {
-            console.log('Saindo do programa.');
+            console.log('Saindo do programa!');
             rl.close();
         } 
         else {
