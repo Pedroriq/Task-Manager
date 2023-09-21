@@ -9,6 +9,7 @@ class Task {
         const allowedStatus = ["A fazer", "Em andamento", "Concluída"];
         if (allowedStatus.includes(status)) {
             this.status = status;
+            return true;
         } else {
             throw new Error(`Status '${status}' não é válido. Use 'A fazer', 'Em andamento' ou 'Concluída'.`);
         }
@@ -21,13 +22,18 @@ class TaskList{
     }
 
     addTaskToList(task) {
+        let successfulOperation = false;
         if (task !== null) {
             this.tasks.push(task)
+            successfulOperation = true;
+            return successfulOperation;
         }
+        return successfulOperation;
     }
     
     viewTasks() {
-        console.log(this.tasks)
+        console.log(this.tasks);
+        return this.tasks;
     }
 
     updateTaskStatus() {
@@ -156,3 +162,6 @@ function startProgram() {
   }
   
 startProgram();
+
+module.exports.Task = Task;
+module.exports.TaskList = TaskList;
