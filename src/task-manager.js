@@ -2,7 +2,16 @@ class Task {
     constructor(title, description, status) {
         this.title = title;
         this.description = description;
-        this.status = status;
+        this.setStatus(status);
+    }
+
+    setStatus(status) {
+        const allowedStatus = ["A fazer", "Em andamento", "Concluída"];
+        if (allowedStatus.includes(status)) {
+            this.status = status;
+        } else {
+            throw new Error(`Status '${status}' não é válido. Use 'A fazer', 'Em andamento' ou 'Concluída'.`);
+        }
     }
 }
 
@@ -12,7 +21,9 @@ class TaskList{
     }
 
     addTaskToList(task) {
-        this.tasks.push(task)
+        if (task !== null) {
+            this.tasks.push(task)
+        }
     }
     
     viewTasks() {
@@ -21,16 +32,21 @@ class TaskList{
 
     updateTaskStatus() {
         return new Promise((resolve, reject) => {
-            rl.question('Entre com o titulo da tarefa a ser atualizada: ', (title) => {
+            rl.question('Entre com o título da tarefa a ser atualizada: ', (title) => {
                 const task = this.tasks.find((task) => task.title === title);
                 if (task) {
                     rl.question('Entre com o novo status: ', (newStatus) => {
-                    task.status = newStatus;
-                    resolve(); // Resolve the promise when done
+                        try {
+                            task.setStatus(newStatus);
+                            resolve();
+                        } catch (error) {
+                            console.log(error.message);
+                            resolve();
+                        }
                     });
                 } else {
                     console.log(`Tarefa com o título '${title}' não encontrada.`);
-                    resolve(); // Resolve the promise even if the task is not found
+                    resolve();
                 }
             });
         });
@@ -60,14 +76,19 @@ const rl = readLine.createInterface({
 
 function createTask() {
     return new Promise((resolve, reject) => {
-      rl.question('Título: ', (title) => {
-        rl.question('Descricao: ', (description) => {
-          rl.question('Status: ', (status) => {
-            const task = new Task(title, description, status);
-            resolve(task);
-          });
+        rl.question('Título: ', (title) => {
+            rl.question('Descricao: ', (description) => {
+                rl.question('Status: ', (status) => {
+                    try {
+                        const task = new Task(title, description, status);
+                        resolve(task);
+                    } catch (error) {
+                        console.log(error.message);
+                        resolve(null); // Resolve with null to indicate an invalid task
+                    }
+                });
+            });
         });
-      });
     });
 }
 
