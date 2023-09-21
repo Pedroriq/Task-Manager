@@ -40,13 +40,6 @@ function createTask() {
         });
       });
     });
-  }
-
-function getMenuChoice() {
-    displayMenu();
-    rl.question('Escolha uma opção: ', (option) => {
-        menu(option);
-    });
 }
 
 function displayMenu() {
