@@ -2,14 +2,14 @@ class Task {
     constructor(title, description, status) {
         this.title = title;
         this.description = description;
-        this.setStatus(status);
+        this.status = this.setStatus(status);
     }
 
     setStatus(status) {
         const allowedStatus = ["A fazer", "Em andamento", "Concluída"];
         if (allowedStatus.includes(status)) {
             this.status = status;
-            return true;
+            return this.status;
         } else {
             throw new Error(`Status '${status}' não é válido. Use 'A fazer', 'Em andamento' ou 'Concluída'.`);
         }
@@ -26,6 +26,7 @@ class TaskList{
         if (task !== null) {
             this.tasks.push(task)
             successfulOperation = true;
+
             return successfulOperation;
         }
         return successfulOperation;
@@ -36,25 +37,18 @@ class TaskList{
         return this.tasks;
     }
 
-    updateTaskStatus() {
+
+
+    updateTaskStatus(task, newStatus) {
         return new Promise((resolve, reject) => {
-            rl.question('Entre com o título da tarefa a ser atualizada: ', (title) => {
-                const task = this.tasks.find((task) => task.title === title);
-                if (task) {
-                    rl.question('Entre com o novo status: ', (newStatus) => {
-                        try {
-                            task.setStatus(newStatus);
-                            resolve();
-                        } catch (error) {
-                            console.log(error.message);
-                            resolve();
-                        }
-                    });
-                } else {
-                    console.log(`Tarefa com o título '${title}' não encontrada.`);
-                    resolve();
-                }
-            });
+            const taskCerta = this.tasks.find((task) => task.title === task.title);
+            try {
+                taskCerta.setStatus(newStatus);
+                resolve();
+            } catch (error) {
+                console.log(error.message);
+                resolve();
+            }
         });
     }
 
@@ -98,13 +92,11 @@ function createTask() {
     });
 }
 
-function removeTask() {
+function removeTask(title) {
     return new Promise((resolve, reject) => {
-        rl.question('Entre com o título da tarefa que você deseja remover: ', (title) => {
             taskList.removeTask(title)
             resolve();
         });
-    });  
 }
 
 function displayMenu() {
@@ -125,17 +117,30 @@ function menu(option, callback) {
             break;
         case '2':
             taskList.viewTasks();
-            callback(); 
+            callback();
             break;
         case '3':
-            taskList.updateTaskStatus().then(() => {
-                callback(); 
-              });
+            rl.question('Entre com o título da tarefa a ser atualizada: ', (title) => {
+                const task = taskList.tasks.find((task) => task.title === title);
+                if (task){
+                    rl.question('Entre com o novo status: ', (newStatus) => {
+                        taskList.updateTaskStatus(task, newStatus).then(() => {
+                        callback();
+                        });
+                    });
+                }else{
+                    console.log(`Tarefa com o título '${title}' não encontrada.`);
+                    resolve();
+                }
+            });
             break;
         case '4':
-            removeTask().then(() => {
-                callback(); 
-            }); 
+            rl.question('Entre com o título da tarefa a ser removida: ', (title) => {
+                removeTask(title).then(() => {
+                    callback();
+                });
+            })
+
             break;
         case '5':
             console.log('Saindo do programa!');
