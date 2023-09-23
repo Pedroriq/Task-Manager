@@ -1,6 +1,7 @@
 # Gerenciador de Tarefas (Task Manager)
 
 Pedro Henrique de Souza - 1721 - GEC
+
 Pedro Henrique Rocha Silveira - 70 - GES
 
 Este é um simples gerenciador de tarefas (task manager) desenvolvido em JavaScript. Ele permite que você crie, visualize, atualize o status e remova tarefas de uma lista.
